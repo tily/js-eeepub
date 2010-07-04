@@ -1,0 +1,4 @@
+
+describe('EeePub.Easy', {
+})
+
