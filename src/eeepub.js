@@ -1,16 +1,21 @@
 //----[preparation]------------------------------------
 var EeePub = {}
-var tags = [
-    'ncx',       'docTitle',  'navMap',   // for EeePub.NCX
-    'navPoint',  'navLabel',  'content',
-    'container', 'rootfiles', 'rootfile', // for EeePub.OCF
-    'package',   'metadata',  'manifest', // for EeePub.OPF
-    'item',      'spine',     'itemref',
-    'guide',     'reference'
-]
-for(var i = 0; i < tags.length; i++) {
+EeePub.registerTags = function() {
+    var tags = [
+        'ncx',       'docTitle',  'navMap',   // for EeePub.NCX
+        'navPoint',  'navLabel',  'content',
+        'container', 'rootfiles', 'rootfile', // for EeePub.OCF
+        'package',   'metadata',  'manifest', // for EeePub.OPF
+        'item',      'spine',     'itemref',
+        'guide',     'reference'
+    ]
+    for(var i = 0; i < tags.length; i++) {
+        XmlBuilder.registerTag(tags[i])
+    }
     XmlBuilder.registerTag(tags[i])
 }
+EeePub.registerTags()
+
 //----[Eeepub.Util]-----------------------------------
 EeePub.Util = {
     extend: function(s, c) {
@@ -45,7 +50,6 @@ EeePub.ContainerItem.prototype = {
     to_xml: function() {
         var builder = new XmlBuilder()
         this.build_xml(builder)
-        //return builder.toString()
         var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + builder.toString()
         return xml
     },
@@ -310,7 +314,7 @@ EeePub.OPF.prototype = {
         })
     },
     complete_manifest: function() {
-        item_id_cache = {}
+        var item_id_cache = {}
 
         result = []
         for(var i = 0; i < this.manifest.length; i++) {
