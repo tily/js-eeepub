@@ -387,3 +387,55 @@ EeePub.Maker.prototype = {
     }
 }
 
+//----[Eeepub.Easy]------------------------------------
+EeePub.Easy = function(arg) {
+    EeePub.Maker.apply(this, [arg])
+    this.sections = []
+    this.assets = []
+}
+EeePub.Easy.prototype = {
+    save: function(filename) {
+        var zip = new Zip()
+        this.prepare(zip)
+        new EeePub.NCX({
+            uid:   this.uid,
+            title: this.title,
+            nav:   this.nav
+        }).save(this.ncx_file, zip)
+        new EeePub.OPF({
+            title:       this.title,
+            identifier:  this.identifiers,
+            creator:     this.creator,
+            publisher:   this.publisher,
+            date:        this.date,
+            language:    this.language,
+            subject:     this.subject,
+            description: this.description,
+            rights:      this.rights,
+            relation:    this.relation,
+            manifest:    this.files,
+            ncx:         this.ncx_file
+        }).save(this.opf_file, zip)
+        new EeePub.OCF({
+            dir:       this.dir,
+            container: this.opf_file
+        }).save(zip)
+        return zip.getDataURI()
+    },
+    prepare: function(zip) {
+        var filenames = []
+        for(var i = 0; i < this.sections.length; i++) {
+            var filename = 'section_' + i + '.html'
+            zip.addString(this.sections[i][1], filename)
+            filenames.push(filename)
+        }
+
+        for(var i = 0; i < this.assets.length; i++) {
+        }
+        this.files = filenames
+        this.nav = []
+        for(var i = 0; i < this.files.length; i++) {
+            this.nav.push({label:this.sections[i][0],content:filenames[i]})
+        }
+    }
+}
