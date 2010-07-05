@@ -23,8 +23,7 @@ describe('EeePub.Maker', {
         })
     },
     'should save': function() {
-        console.log(maker.save())
-        //maker.save()
+        maker.save()
     }
 })
 
